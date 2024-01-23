@@ -1,0 +1,116 @@
+<!-- public/index.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <title>Weather and News App</title>
+</head>
+<body>
+
+  <header class="bg-secondary mb-5 p-3">
+    <div class="container">
+      <h1 class="text-center text-light fs-2">Assignment 2</h1>
+    </div>
+  </header>
+
+  <div class="container">
+    <h2>Weather in cities:</h2>
+
+    <form id="weatherForm" class="form-floating">
+      <input class="form-control mb-2" type="text" id="cityInput" name="city" required>
+      <label for="cityInput">Enter City:</label>
+      <button type="submit" class="btn btn-primary">Get Weather</button>
+    </form>
+
+    <div id="weatherInfo"></div>
+
+    <hr>
+
+    <h2>Some interesting news for you</h2>
+
+    <form id="newsForm" class="form-floating mb-5">
+      <input class="form-control mb-2" type="text" id="queryInput" name="query">
+      <label for="queryInput">Search News:</label>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+
+    <div id="newsArticles"></div>
+  </div>
+
+  <footer class="bg-secondary p-3">
+    <div class="container">
+      <p class="text-light">Li Dmitriy SE-2229</p>
+    </div>
+  </footer>
+
+  <script>
+      document.getElementById('weatherForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const city = document.getElementById('cityInput').value;
+
+      fetch(`/weather?city=${city}`)
+        .then(response => response.json())
+        .then(data => {
+          const weatherInfo = document.getElementById('weatherInfo');
+          weatherInfo.innerHTML = formatWeatherData(data);
+        })
+        .catch(error => console.error(error));
+
+      function formatWeatherData(data) {
+        const { location, weather } = data;
+
+        return `
+          <h2>Weather Information for ${city}:</h2>
+          <div>
+            <p><strong>Temperature:</strong> ${weather.main.temp} K</p>
+            <p><strong>Description:</strong> ${weather.weather[0].description}</p>
+            <p><strong>Humidity:</strong> ${weather.main.humidity}%</p>
+            <p><strong>Wind Speed:</strong> ${weather.wind.speed} m/s</p>
+            <p><strong>Location:</strong> Latitude ${location.lat}, Longitude ${location.lng}</p>
+          </div>
+        `;
+      }
+    });
+
+    document.getElementById('newsForm').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      const query = document.getElementById('queryInput').value;
+
+      fetch(`/news?query=${query}`)
+        .then(response => response.json())
+        .then(data => {
+          const newsArticles = document.getElementById('newsArticles');
+          newsArticles.innerHTML = formatNewsData(data);
+        })
+        .catch(error => console.error(error));
+
+      function formatNewsData(data) {
+        const articles = data.articles;
+
+        if (!articles || articles.length === 0) {
+          return `<p>No news articles found for ${query}.</p>`;
+        }
+
+        return `
+          <ul>
+            ${articles.map(article => `
+              <li>
+                <h3>${article.title}</h3>
+                <p>${article.description}</p>
+                <p><strong>Source:</strong> ${article.source.name}</p>
+                <p><strong>URL:</strong> <a href="${article.url}" target="_blank">${article.url}</a></p>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+      }
+    });
+  </script>
+
+</body>
+</html>

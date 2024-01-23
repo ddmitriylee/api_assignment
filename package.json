@@ -1,0 +1,19 @@
+{
+  "name": "api_assignment",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@googlemaps/google-maps-services-js": "^3.3.42",
+    "axios": "^1.6.5",
+    "express": "^4.18.2",
+    "newsapi": "^2.4.1",
+    "opencage-api-client": "^1.0.3"
+  }
+}
